@@ -59,6 +59,7 @@ def launch(main_func, num_gpus_per_machine, num_machines=1, machine_rank=0, dist
             daemon=False,
         )
     else:
+        dist.init_process_group('gloo', init_method='file://tmp/somefile', rank=0, world_size=1)
         main_func(*args)
 
 
