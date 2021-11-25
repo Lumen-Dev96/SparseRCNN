@@ -28,6 +28,8 @@ from detectron2.solver.build import maybe_add_gradient_clipping
 
 from sparsercnn import SparseRCNNDatasetMapper, add_sparsercnn_config, SparseRCNNWithTTA
 
+from detectron2.data.datasets import register_coco_instances
+
 
 class Trainer(DefaultTrainer):
 #     """
@@ -116,6 +118,7 @@ class Trainer(DefaultTrainer):
         res = OrderedDict({k + "_TTA": v for k, v in res.items()})
         return res
 
+'''
 def setup(args):
     """
     Create configs and perform basic setups.
@@ -124,6 +127,31 @@ def setup(args):
     add_sparsercnn_config(cfg)
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
+    cfg.freeze()
+    default_setup(cfg, args)
+    return cfg
+'''
+
+
+NUM_CLASSES = 2
+def setup(args):
+    """
+    Create configs and perform basic setups.
+    """
+    register_coco_instances("train", {}, "datasets/coco/annotations/instances_train2017.json",
+                        "datasets/coco/train2017")
+    register_coco_instances("test", {}, "datasets/coco/annotations/instances_val2017.json",
+                        "datasets/coco/val2017")
+
+
+    cfg = get_cfg()
+    add_sparsercnn_config(cfg)
+    cfg.merge_from_file(args.config_file)
+    cfg.merge_from_list(args.opts)
+    cfg.DATASETS.TRAIN = ("train",)
+    cfg.DATASETS.TEST = ("test",)
+    cfg.MODEL.SparseRCNN.NUM_CLASSES = NUM_CLASSES
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES=NUM_CLASSES
     cfg.freeze()
     default_setup(cfg, args)
     return cfg
