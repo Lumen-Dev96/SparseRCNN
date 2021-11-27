@@ -50,6 +50,7 @@ class VisualizationDemo(object):
         # SparseRCNN uses RGB input as default 
 #         image = image[:, :, ::-1]
         visualizer = Visualizer(image, self.metadata, instance_mode=self.instance_mode)
+        visualizer.metadata.thing_classes[:10] = ["aircraft", "oiltank"]
         if "panoptic_seg" in predictions:
             panoptic_seg, segments_info = predictions["panoptic_seg"]
             vis_output = visualizer.draw_panoptic_seg_predictions(

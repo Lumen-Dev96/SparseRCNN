@@ -14,13 +14,15 @@ from predictor import VisualizationDemo
 
 # constants
 WINDOW_NAME = "COCO detections"
-
+NUM_CLASSES = 2
 
 def setup_cfg(args):
     # load config from file and command-line arguments
     cfg = get_cfg()
     from projects.SparseRCNN.sparsercnn import add_sparsercnn_config
     add_sparsercnn_config(cfg)
+    cfg.MODEL.SparseRCNN.NUM_CLASSES = NUM_CLASSES
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = NUM_CLASSES
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
     # Set score_threshold for builtin models
